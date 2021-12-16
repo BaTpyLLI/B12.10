@@ -1,0 +1,45 @@
+groups:
+- name: example
+  rules:
+  - alert: PrometheusTargetMissing
+    expr: up == 0
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Prometheus target missing (instance {{ $labels.instance }})"
+      description: "A Prometheus target has disappeared. An exporter might be crashed. VALUE = {{ $value }}  LABELS: {{ $labels }}"
+
+
+- name: RequestLatency
+  rules:
+  - alert: RequestLatency >5s lms.skillfactory.ru
+    expr: sum(probe_http_duration_seconds{instance="https://lms.skillfactory.ru", job="blackbox"}) > 5
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      summary: "High request latency on lms.skillfactory.ru"
+      description: "lms.skillfactory.ru has request latency >5s (current value: {{$value}})"
+
+- name: Response code
+  rules:
+  - alert: Response code != 200 lms.skillfactory.ru
+    expr: probe_http_status_code{instance="https://lms.skillfactory.ru"} != 200
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Response code {{$labels.instance}} != 200"
+      description: "current value: {{$value}} != 200"
+
+- name: Something is wrong with uptime
+  rules:
+  - alert: Server rebooted
+    expr: sum(time() - node_boot_time_seconds{instance="node-exporter:9100"}) < 600
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Сервер перезагрузился!"
+      description: "У сервера сбросился аптайм - необходимо проверить, что случилось"
