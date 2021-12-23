@@ -28,3 +28,13 @@ scrape_configs:
         target_label: instance
       - target_label: __address__
         replacement: blackbox-exporter:9115
+
+  - job_name: nodewhithnginx
+    scrape_interval: 5s
+    static_configs:
+    - targets: ['192.168.10.20:9100']
+
+  - job_name: nginx
+    scrape_interval: 5s
+    static_configs:
+    - targets: ['192.168.10.20:9113']
